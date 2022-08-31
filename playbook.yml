@@ -1,0 +1,12 @@
+---
+- name: init k8s cluster
+  hosts: all
+  roles:
+    - app
+
+  tasks:
+    - name: Print Info
+      debug:
+        msg: "Web Site : http://{{ inventory_hostname  }}"
+      when:
+          - ansible_facts['hostname'] == 'master'

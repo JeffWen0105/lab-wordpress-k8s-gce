@@ -148,10 +148,20 @@
   when:
     - ansible_facts['hostname'] == 'master'
 
-- name: Show K8s INFO
+- name: Get K8s INFO...
   shell: |
-    kubectl get node -o wide
+    echo "---------------------- ALL  NODE  INFO ----------------------"
+    kubectl get node
+    echo "---------------------- ALL  RESOURCE  -----------------------"
     kubectl get all
+  register: info
+  when:
+    - ansible_facts['hostname'] == 'master'
+
+- name: Print INFO
+  debug: var=info.stdout_lines
+  when:
+   - ansible_facts['hostname'] == 'master'
 
 - name: Waiting for WordPress WebSite up...
   uri:
@@ -159,5 +169,8 @@
     status_code: 200
   register: result
   until: result.status == 200
-  retries: 300
-  delay: 1
+  retries: 150
+  delay: 2
+  when:
+    - ansible_facts['hostname'] == 'master'
+
